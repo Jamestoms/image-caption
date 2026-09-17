@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import ToolBar from './components/ToolBar.vue'
 import ThumbnailList from './components/ThumbnailList.vue'
 import LabelPopover from './components/LabelPopover.vue'
@@ -105,10 +104,7 @@ function closePopover() {
 
 function handlePopoverConfirm() {
   const label = popover.label.trim()
-  if (!label) {
-    ElMessage.warning('请输入或选择标签名称')
-    return
-  }
+  if (!label) return // 空标签校验与提示由浮层内部完成，此处兜底
   if (popover.mode === 'create') {
     engine.confirmPending(label)
   } else {
@@ -132,27 +128,13 @@ function handlePopoverDelete() {
 // ---------- 工具栏 ----------
 
 function handleClear() {
-  if (!engine.getAnnotations().length) {
-    ElMessage.info('当前图片暂无标注')
-    return
-  }
-  ElMessageBox.confirm('确定清空当前图片的全部标注吗？', '提示', {
-    confirmButtonText: '清空',
-    cancelButtonText: '取消',
-    type: 'warning',
-  })
-    .then(() => {
-      engine.clearCurrent()
-    })
-    .catch(() => {})
+  // 二次确认由工具栏按钮的确认态交互完成，此处直接执行
+  engine.clearCurrent()
 }
 
 function handleSave() {
   const imageId = engine.currentImageId.value
-  if (!imageId) {
-    ElMessage.warning('暂无图片')
-    return
-  }
+  if (!imageId) return // 无图时保存按钮已禁用，此处兜底
   const list = engine.getAnnotations(imageId)
   emit('save', imageId, list)
   props.onSave?.(imageId, list)
@@ -307,6 +289,8 @@ defineExpose({
         :can-undo="canUndo"
         :can-redo="canRedo"
         :has-selected="!!selectedId"
+        :has-image="!!currentImageId"
+        :has-annotations="(annotationCounts[currentImageId] || 0) > 0"
         @set-mode="engine.setMode"
         @zoom-in="engine.zoomIn"
         @zoom-out="engine.zoomOut"

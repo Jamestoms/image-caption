@@ -16,19 +16,20 @@
 - 屏幕尺寸变化自适应
 - 支持已有标注数据回显、继续编辑
 - 提供 TypeScript 类型声明，同时兼容非 TS 项目
+- 零 UI 框架依赖（按钮/下拉/提示均为自绘实现，不引入 element-plus 等组件库，与宿主项目任何 UI 框架无冲突）
 
 ## 示例截图
 
-![demo1 整体界面与标注效果](demo1.png)
+![demo1 整体界面与标注效果](https://raw.githubusercontent.com/jamestoms/image-caption/HEAD/demo1.png)
 
-![demo2 标注编辑交互](demo2.png)
+![demo2 标注编辑交互](https://raw.githubusercontent.com/jamestoms/image-caption/HEAD/demo2.png)
 
 ## 环境要求
 
 - Vue `^3.2.0`
 - Node `>= 18`（仅本地开发/构建需要）
 
-`element-plus`、`fabric` 为组件库 `dependencies`，安装本组件时会自动安装，无需手动处理。
+`fabric` 为组件库唯一运行时依赖（dependencies），安装本组件时会自动安装，无需手动处理。
 
 ## 安装
 
@@ -172,6 +173,7 @@ interface ImageItem {
 | 拖动选中标注 | 移动位置（限制在图片范围内），松开后自动更新坐标 |
 | Delete / Backspace | 删除选中标注 |
 | Ctrl+Z / Ctrl+Shift+Z（或 Ctrl+Y） | 撤销 / 反撤销 |
+| 清空按钮 | 首次点击进入红色确认态，3 秒内再次点击执行清空，超时自动还原 |
 | ESC | 取消绘制 / 取消选中 / 关闭浮层 |
 | Enter | 结束多边形绘制 |
 | 双击 / 点击起始顶点 | 结束多边形绘制 |

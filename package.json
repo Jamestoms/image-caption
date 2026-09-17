@@ -6,7 +6,7 @@
     "url": "https://github.com/jamestoms/image-caption.git"
   },
   
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "基于 fabric.js 的 Vue3 在线图片标注组件（ImageCaption）",
   "type": "module",
   "license": "MIT",
@@ -23,7 +23,11 @@
     "image",
     "annotation",
     "label",
-    "标注"
+    "标注",
+    "image caption",
+    "image-caption",
+    "在线图片标注",
+    "数据集标注"
   ],
   "main": "./dist/image-caption.umd.cjs",
   "module": "./dist/image-caption.js",
@@ -37,9 +41,7 @@
     "./style.css": "./dist/image-caption.css"
   },
   "files": [
-    "dist",
-    "demo1.png",
-    "demo2.png"
+    "dist"
   ],
   "scripts": {
     "dev": "vite",
@@ -50,8 +52,6 @@
     "vue": "^3.2.0"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.3.1",
-    "element-plus": "^2.9.0",
     "fabric": "^6.0.0"
   },
   "devDependencies": {

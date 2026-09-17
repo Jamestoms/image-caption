@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ElButton, ElMessage, ElMessageBox } from 'element-plus'
 import type { AnnotationData, ImageItem } from '../../src/index'
 
 /** 生成 SVG data-url 图片（demo 无网络依赖） */
@@ -105,10 +104,17 @@ const images = ref<ImageItem[]>([
 const presetLabels = ['行人', '车辆', '建筑', '植被', '天空', '道路']
 
 const captionRef = ref<any>(null)
+const saveTip = ref('')
+const showDataPanel = ref(false)
+const allDataText = ref('')
+
+let saveTipTimer: ReturnType<typeof setTimeout> | undefined
 
 function handleSave(imageId: string, annotations: AnnotationData[]) {
   console.log('[demo] save:', imageId, annotations)
-  ElMessage.success(`已保存图片 ${imageId} 的 ${annotations.length} 条标注，数据见控制台`)
+  saveTip.value = `已保存图片 ${imageId} 的 ${annotations.length} 条标注（数据见控制台）`
+  if (saveTipTimer) clearTimeout(saveTipTimer)
+  saveTipTimer = setTimeout(() => (saveTip.value = ''), 3000)
 }
 
 function handleChange(imageId: string, annotations: AnnotationData[]) {
@@ -118,18 +124,8 @@ function handleChange(imageId: string, annotations: AnnotationData[]) {
 
 function showAllData() {
   const all = captionRef.value?.getAllAnnotations?.()
-  ElMessageBox.alert(
-    `<pre style="max-height:420px;overflow:auto;font-size:12px;">${JSON.stringify(
-      all,
-      null,
-      2
-    ).replace(/</g, '&lt;')}</pre>`,
-    '全部标注数据',
-    {
-      dangerouslyUseHTMLString: true,
-      confirmButtonText: '关闭',
-    }
-  ).catch(() => {})
+  allDataText.value = JSON.stringify(all, null, 2)
+  showDataPanel.value = true
 }
 </script>
 
@@ -144,9 +140,11 @@ function showAllData() {
         </p>
       </div>
       <div class="demo-header-actions">
-        <el-button @click="showAllData">获取全部标注数据</el-button>
+        <button class="demo-btn" @click="showAllData">获取全部标注数据</button>
       </div>
     </div>
+
+    <div v-if="saveTip" class="demo-save-tip">{{ saveTip }}</div>
 
     <ImageCaption
       ref="captionRef"
@@ -156,6 +154,14 @@ function showAllData() {
       :on-save="handleSave"
       @change="handleChange"
     />
+
+    <div v-if="showDataPanel" class="demo-data-panel">
+      <div class="demo-data-panel-header">
+        <span>全部标注数据</span>
+        <button class="demo-btn demo-btn--small" @click="showDataPanel = false">关闭</button>
+      </div>
+      <pre class="demo-data-pre">{{ allDataText }}</pre>
+    </div>
   </div>
 </template>
 
@@ -195,7 +201,76 @@ body {
   line-height: 1.7;
 }
 
+.demo-btn {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  background: #fff;
+  color: #606266;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.demo-btn:hover {
+  color: #409eff;
+  border-color: #c6e2ff;
+  background: #ecf5ff;
+}
+
+.demo-btn--small {
+  height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.demo-save-tip {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: #f0f9eb;
+  border: 1px solid #e1f3d8;
+  color: #67c23a;
+  font-size: 13px;
+}
+
 .demo-caption {
   height: 660px;
+}
+
+.demo-data-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100;
+  width: 420px;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+}
+
+.demo-data-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid #ebeef5;
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.demo-data-pre {
+  flex: 1;
+  overflow: auto;
+  padding: 12px 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #606266;
 }
 </style>

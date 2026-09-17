@@ -2,8 +2,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
 
-// 库构建时外部化的依赖（vue 为 peer；fabric / element-plus 为 dependencies，运行时从宿主环境解析）
-const externalDeps = ['vue', 'element-plus', '@element-plus/icons-vue', 'fabric']
+// 库构建时外部化的依赖（vue 为 peer；fabric 为 dependencies，运行时从宿主环境解析）
+const externalDeps = ['vue', 'fabric']
 
 export default defineConfig(({ command }) => {
   const isLib = command === 'build'
@@ -30,8 +30,6 @@ export default defineConfig(({ command }) => {
             output: {
               globals: {
                 vue: 'Vue',
-                'element-plus': 'ElementPlus',
-                '@element-plus/icons-vue': 'ElementPlusIconsVue',
                 fabric: 'fabric',
               },
             },
