@@ -110,7 +110,10 @@ const allDataText = ref('')
 
 let saveTipTimer: ReturnType<typeof setTimeout> | undefined
 
-function handleSave(imageId: string, annotations: AnnotationData[]) {
+function handleSave() {
+  // 手动保存模式：从 ref 获取当前图片 id 与标注数据，提交到宿主后端
+  const imageId = captionRef.value?.currentImageId || ''
+  const annotations = captionRef.value?.getAnnotations?.() || []
   console.log('[demo] save:', imageId, annotations)
   saveTip.value = `已保存图片 ${imageId} 的 ${annotations.length} 条标注（数据见控制台）`
   if (saveTipTimer) clearTimeout(saveTipTimer)
@@ -120,6 +123,10 @@ function handleSave(imageId: string, annotations: AnnotationData[]) {
 function handleChange(imageId: string, annotations: AnnotationData[]) {
   // 标注数据变化时触发，可在此做自动暂存等
   console.log('[demo] change:', imageId, annotations.length)
+}
+
+function handleDownload(imageId: string, filename: string) {
+  console.log('[demo] download:', imageId, filename)
 }
 
 function showAllData() {
@@ -151,9 +158,14 @@ function showAllData() {
       class="demo-caption"
       :images="images"
       :labels="presetLabels"
-      :on-save="handleSave"
+      downloadable
       @change="handleChange"
-    />
+      @download="handleDownload"
+    >
+      <template #actions>
+        <button class="ic-btn ic-btn--primary" @click="handleSave">保存</button>
+      </template>
+    </ImageCaption>
 
     <div v-if="showDataPanel" class="demo-data-panel">
       <div class="demo-data-panel-header">

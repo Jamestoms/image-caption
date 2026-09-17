@@ -789,6 +789,64 @@ export function useCanvasEngine(options: EngineOptions) {
     }
   }
 
+  // ---------- 图片导出 ----------
+
+  /**
+   * 导出当前图片（含标注与标签）为 PNG dataURL，尺寸为图片原始像素。
+   * 导出时临时重置视口为 1:1 并隐藏未确认/绘制中的临时对象，导出后恢复原状。
+   * 失败（无图片或画布异常）返回 null。
+   */
+  function exportImage(): string | null {
+    if (!canvas || !bgImage || !imgW || !imgH) return null
+    const zoom = getZoom()
+    const savedVpt = [...canvas.viewportTransform] as typeof canvas.viewportTransform
+
+    // 临时隐藏未确认图形与多边形绘制辅助元素
+    const hidden: FabricObject[] = []
+    if (pendingShape) {
+      pendingShape.visible = false
+      hidden.push(pendingShape)
+    }
+    ;[tempPolyline, tempGuideLine].forEach((o) => {
+      if (o) {
+        o.visible = false
+        hidden.push(o)
+      }
+    })
+    tempDots.forEach((d) => {
+      d.visible = false
+      hidden.push(d)
+    })
+
+    let url: string | null = null
+    try {
+      // 视口重置为 1:1（图片原始像素），标签字号同步为基准字号（视觉恒定）
+      canvas.setViewportTransform([1, 0, 0, 1, 0, 0])
+      shapeMap.forEach(({ shape, label }) => syncLabelText(label, shape, 1))
+      canvas.renderAll()
+      url = canvas.toDataURL({
+        format: 'png',
+        multiplier: 1,
+        left: 0,
+        top: 0,
+        width: imgW,
+        height: imgH,
+      })
+    } catch (err) {
+      console.error('[ImageCaption] 导出图片失败:', err)
+      url = null
+    } finally {
+      // 恢复视口、标签字号与临时对象可见性
+      canvas.setViewportTransform(savedVpt)
+      shapeMap.forEach(({ shape, label }) => syncLabelText(label, shape, zoom))
+      hidden.forEach((o) => {
+        o.visible = true
+      })
+      canvas.requestRenderAll()
+    }
+    return url
+  }
+
   // ---------- 数据获取 ----------
 
   function getAnnotations(imageId?: string): AnnotationData[] {
@@ -853,6 +911,8 @@ export function useCanvasEngine(options: EngineOptions) {
     getAnnotations,
     getAllAnnotations,
     getSelectedScreenPoint,
+    // 导出
+    exportImage,
   }
 }
 

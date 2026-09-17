@@ -10,6 +10,8 @@ defineProps<{
   hasSelected: boolean
   hasImage: boolean
   hasAnnotations: boolean
+  /** 是否开启导出功能（显示下载按钮） */
+  downloadable: boolean
 }>()
 
 const emit = defineEmits<{
@@ -21,7 +23,7 @@ const emit = defineEmits<{
   (e: 'redo'): void
   (e: 'delete'): void
   (e: 'clear'): void
-  (e: 'save'): void
+  (e: 'download'): void
 }>()
 
 // 清空二次确认：首次点击进入确认态（按钮变红），3 秒内再次点击执行，超时自动还原
@@ -246,26 +248,31 @@ onBeforeUnmount(() => {
 
     <div class="ic-toolbar-spacer" />
 
-    <button type="button" class="ic-btn ic-btn--primary" :disabled="!hasImage" @click="emit('save')">
-      <svg viewBox="0 0 24 24" width="14" height="14" style="margin-right: 4px">
-        <path
-          d="M6 2.5h8.5L19 7v14.5H6z"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linejoin="round"
-        />
-        <path d="M14 2.5V7h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-        <path
-          d="m9.5 13.5 2.5 2.5 5-5"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-      保存
-    </button>
+    <div v-if="downloadable" class="ic-tip">
+      <button type="button" class="ic-btn ic-btn--icon" :disabled="!hasImage" @click="emit('download')">
+        <svg viewBox="0 0 24 24" width="14" height="14">
+          <path
+            d="M12 3v10M7 8.5l5 5 5-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M4 17v3h16v-3"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+      <span class="ic-tip__bubble">下载标注后的图片（PNG，原始像素）</span>
+    </div>
+
+    <!-- 宿主自定义操作区（如保存/提交按钮），渲染在工具栏最右侧 -->
+    <slot name="actions" />
   </div>
 </template>

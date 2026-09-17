@@ -5,7 +5,7 @@ import ThumbnailList from './components/ThumbnailList.vue'
 import LabelPopover from './components/LabelPopover.vue'
 import { useCanvasEngine } from './useCanvasEngine'
 import type { CanvasEngine } from './useCanvasEngine'
-import type { AllAnnotations, AnnotationData, ImageItem, SaveHandler } from './types'
+import type { AllAnnotations, AnnotationData, ImageItem } from './types'
 import { clamp } from './utils'
 
 const props = withDefaults(
@@ -14,19 +14,19 @@ const props = withDefaults(
     images: ImageItem[]
     /** 预设标签列表，标签输入时可选择 */
     labels?: string[]
-    /** 保存处理函数 */
-    onSave?: SaveHandler
+    /** 是否开启下载功能（工具栏显示下载按钮，导出含标注的图片） */
+    downloadable?: boolean
   }>(),
   {
     images: () => [],
     labels: () => [],
-    onSave: undefined,
+    downloadable: false,
   }
 )
 
 const emit = defineEmits<{
-  (e: 'save', imageId: string, annotations: AnnotationData[]): void
   (e: 'change', imageId: string, annotations: AnnotationData[]): void
+  (e: 'download', imageId: string, filename: string): void
 }>()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
@@ -132,12 +132,48 @@ function handleClear() {
   engine.clearCurrent()
 }
 
-function handleSave() {
+// ---------- 图片下载 ----------
+
+/** 轻量提示条（替代全局 Message，避免 UI 框架依赖） */
+const toast = reactive({
+  visible: false,
+  text: '',
+  type: 'success' as 'success' | 'error',
+})
+let toastTimer: ReturnType<typeof setTimeout> | undefined
+
+function showToast(text: string, type: 'success' | 'error') {
+  toast.text = text
+  toast.type = type
+  toast.visible = true
+  if (toastTimer) clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => {
+    toast.visible = false
+  }, 2600)
+}
+
+function handleDownload() {
   const imageId = engine.currentImageId.value
-  if (!imageId) return // 无图时保存按钮已禁用，此处兜底
-  const list = engine.getAnnotations(imageId)
-  emit('save', imageId, list)
-  props.onSave?.(imageId, list)
+  if (!imageId) return
+  const dataUrl = engine.exportImage()
+  if (!dataUrl) {
+    showToast('导出失败，请重试', 'error')
+    return
+  }
+  // 文件名：图片名（去扩展名）-annotated.png，无名时用图片 id
+  const item = props.images.find((i) => i.id === imageId)
+  const base = (item?.name || imageId).replace(/\.[^.]+$/, '')
+  const filename = `${base}-annotated.png`
+
+  const a = document.createElement('a')
+  a.href = dataUrl
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+
+  emit('download', imageId, filename)
+  showToast(`已导出：${filename}`, 'success')
 }
 
 // ---------- 图片 ----------
@@ -209,6 +245,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKeydown)
+  if (toastTimer) clearTimeout(toastTimer)
   engine.destroy()
 })
 
@@ -250,6 +287,10 @@ function fitView() {
   engine.fitView()
 }
 
+function exportImage(): string | null {
+  return engine.exportImage()
+}
+
 defineExpose({
   /** 获取标注数据（不传 imageId 为当前图片） */
   getAnnotations,
@@ -269,8 +310,12 @@ defineExpose({
   zoomOut,
   /** 适应视野 */
   fitView,
+  /** 导出当前图片（含标注）的 PNG dataURL（原始像素尺寸） */
+  exportImage,
   /** 切换图片 */
   switchImage,
+  /** 当前图片 id（无图时为空字符串） */
+  currentImageId: engine.currentImageId,
 })
 </script>
 
@@ -291,6 +336,7 @@ defineExpose({
         :has-selected="!!selectedId"
         :has-image="!!currentImageId"
         :has-annotations="(annotationCounts[currentImageId] || 0) > 0"
+        :downloadable="downloadable"
         @set-mode="engine.setMode"
         @zoom-in="engine.zoomIn"
         @zoom-out="engine.zoomOut"
@@ -299,8 +345,12 @@ defineExpose({
         @redo="engine.redo"
         @delete="engine.deleteSelected"
         @clear="handleClear"
-        @save="handleSave"
-      />
+        @download="handleDownload"
+      >
+        <template #actions>
+          <slot name="actions" />
+        </template>
+      </ToolBar>
       <div ref="wrapRef" class="ic-canvas-wrap">
         <canvas ref="canvasRef" class="ic-canvas" />
         <LabelPopover
@@ -318,6 +368,7 @@ defineExpose({
         <div v-else-if="!images.length" class="ic-empty">暂无图片</div>
         <div v-else-if="!imageLoaded" class="ic-empty">图片加载中…</div>
       </div>
+      <div v-if="toast.visible" class="ic-toast" :class="`is-${toast.type}`">{{ toast.text }}</div>
     </div>
   </div>
 </template>

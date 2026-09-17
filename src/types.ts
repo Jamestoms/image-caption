@@ -36,11 +36,5 @@ export interface ImageItem {
   annotations?: AnnotationData[]
 }
 
-/** 保存处理函数 */
-export type SaveHandler = (
-  imageId: string,
-  annotations: AnnotationData[]
-) => void | Promise<void>
-
 /** 全部图片标注数据映射 */
 export type AllAnnotations = Record<string, AnnotationData[]>

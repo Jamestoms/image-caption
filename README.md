@@ -63,9 +63,13 @@ app.mount('#app')
   <ImageCaption
     :images="images"
     :labels="['行人', '车辆', '建筑']"
-    :on-save="handleSave"
     style="height: 640px"
-  />
+  >
+    <!-- 可选：自定义操作区（工具栏右侧），如保存按钮 -->
+    <template #actions>
+      <button class="ic-btn ic-btn--primary" @click="handleSave">保存</button>
+    </template>
+  </ImageCaption>
 </template>
 ```
 
@@ -92,14 +96,77 @@ import 'image-caption/style.css'
 | --- | --- | --- | --- | --- |
 | `images` | `ImageItem[]` | 是 | `[]` | 图片列表，项内含 `annotations` 则加载后回显 |
 | `labels` | `string[]` | 否 | `[]` | 预设标签列表，标签输入时可选择（也可自由输入） |
-| `onSave` | `(imageId, annotations) => void` | 否 | - | 保存处理函数，点击工具栏「保存」按钮时调用 |
+| `downloadable` | `boolean` | 否 | `false` | 是否开启下载功能（工具栏显示下载按钮，导出含标注的 PNG 图片） |
 
 ### Events
 
 | 名称 | 参数 | 说明 |
 | --- | --- | --- |
-| `save` | `(imageId: string, annotations: AnnotationData[])` | 点击保存按钮时触发（与 `onSave` 同时生效） |
 | `change` | `(imageId: string, annotations: AnnotationData[])` | 标注数据发生变化时触发（新增/删除/移动/标签修改/撤销/重做/清空） |
+| `download` | `(imageId: string, filename: string)` | 点击下载按钮导出成功后触发（需开启 `downloadable`） |
+
+### 插槽
+
+| 名称 | 说明 |
+| --- | --- |
+| `actions` | 自定义操作区，渲染在工具栏最右侧，适合放置保存/提交/下一步等宿主业务按钮。可直接复用内置按钮样式类 `ic-btn`（默认）、`ic-btn--primary`（主要）、`ic-btn--danger-plain`（危险），也可完全自定义 |
+
+### 保存数据最佳实践
+
+组件不内置保存按钮（数据何时、如何持久化由宿主决定），提供两种常用模式：
+
+**模式一：实时保存** —— 监听 `change` 事件，标注每次变化自动提交：
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import type { AnnotationData } from 'image-caption'
+
+const images = ref([
+  { id: 'img-1', url: 'https://example.com/a.jpg' },
+])
+
+async function handleChange(imageId: string, annotations: AnnotationData[]) {
+  await fetch(`/api/annotations/${imageId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(annotations),
+  })
+}
+</script>
+
+<template>
+  <ImageCaption :images="images" @change="handleChange" style="height: 640px" />
+</template>
+```
+
+**模式二：手动保存** —— 通过 `actions` 插槽放自己的按钮，点击时从 ref 获取数据（可携带页面其他表单字段一起提交）：
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const captionRef = ref()
+
+async function handleSave() {
+  const imageId = captionRef.value.currentImageId
+  const annotations = captionRef.value.getAnnotations()
+  await fetch(`/api/annotations/${imageId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(annotations),
+  })
+}
+</script>
+
+<template>
+  <ImageCaption ref="captionRef" :images="images" style="height: 640px">
+    <template #actions>
+      <button class="ic-btn ic-btn--primary" @click="handleSave">保存</button>
+    </template>
+  </ImageCaption>
+</template>
+```
 
 ### 组件方法（通过 ref 调用）
 
@@ -125,6 +192,10 @@ captionRef.value.clearCurrent()
 captionRef.value.zoomIn()
 captionRef.value.zoomOut()
 captionRef.value.fitView()
+// 导出当前图片（含标注）的 PNG dataURL（图片原始像素尺寸，可用于自定义上传等场景）
+const dataUrl = captionRef.value.exportImage()
+// 当前图片 id（手动保存时配合 getAnnotations 使用）
+const imageId = captionRef.value.currentImageId
 // 切换图片
 captionRef.value.switchImage('img-2')
 ```
