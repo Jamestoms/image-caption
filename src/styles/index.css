@@ -1,0 +1,213 @@
+/* ================= ImageCaption 组件样式（ic- 前缀，避免样式污染） ================= */
+
+.ic-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  min-width: 640px;
+  overflow: hidden;
+  background: #f5f7fa;
+  border: 1px solid #e4e7ed;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-family:
+    'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial,
+    sans-serif;
+}
+
+/* ---------- 缩略图区域 ---------- */
+
+.ic-thumbnails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 168px;
+  flex-shrink: 0;
+  padding: 8px;
+  background: #fff;
+  border-right: 1px solid #e4e7ed;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.ic-thumb-item {
+  position: relative;
+  border: 1px solid #e4e7ed;
+  border-radius: 6px;
+  padding: 4px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.ic-thumb-item:hover {
+  border-color: #a0cfff;
+}
+
+.ic-thumb-item.active {
+  border-color: #409eff;
+  box-shadow: 0 0 0 1px #409eff;
+}
+
+.ic-thumb-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 84px;
+  border-radius: 4px;
+  background: #fafafa;
+  overflow: hidden;
+}
+
+.ic-thumb-img img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  user-select: none;
+}
+
+.ic-thumb-name {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 18px;
+  color: #606266;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ic-thumb-count {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #409eff;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.ic-thumb-empty {
+  padding: 16px 0;
+  font-size: 12px;
+  color: #909399;
+  text-align: center;
+}
+
+/* ---------- 主区域 ---------- */
+
+.ic-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- 工具栏 ---------- */
+
+.ic-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 10px;
+  background: #fff;
+  border-bottom: 1px solid #e4e7ed;
+  box-sizing: border-box;
+}
+
+.ic-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ic-toolbar-sep {
+  width: 1px;
+  height: 20px;
+  background: #dcdfe6;
+  margin: 0 6px;
+}
+
+.ic-toolbar-spacer {
+  flex: 1;
+}
+
+.ic-zoom-text {
+  min-width: 48px;
+  text-align: center;
+  font-size: 12px;
+  color: #606266;
+  user-select: none;
+}
+
+/* ---------- 画布区域 ---------- */
+
+.ic-canvas-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #eef1f6;
+}
+
+.ic-canvas-wrap .canvas-container {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+}
+
+.ic-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ic-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #909399;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* ---------- 标签输入浮层 ---------- */
+
+.ic-label-popover {
+  position: absolute;
+  z-index: 10;
+  width: 240px;
+  padding: 10px 12px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  box-sizing: border-box;
+}
+
+.ic-label-popover-title {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.ic-label-popover-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ic-label-popover-spacer {
+  flex: 1;
+}
