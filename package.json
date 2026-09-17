@@ -5,9 +5,12 @@
     "type": "git",
     "url": "https://github.com/jamestoms/image-caption.git"
   },
-  
-  "version": "0.4.0",
-  "description": "基于 fabric.js 的 Vue3 在线图片标注组件（ImageCaption）",
+  "homepage": "https://github.com/jamestoms/image-caption#readme",
+  "bugs": {
+    "url": "https://github.com/jamestoms/image-caption/issues"
+  },
+  "version": "1.0.0",
+  "description": "Vue 3 image annotation component based on fabric.js — draw rect / circle / polygon annotations on images with zoom, undo/redo, echo and PNG export. 基于 fabric.js 的 Vue3 在线图片标注组件",
   "type": "module",
   "license": "MIT",
   "packageManager": "pnpm@10.25.0",
@@ -17,15 +20,25 @@
     ]
   },
   "keywords": [
+    "vue",
     "vue3",
-    "fabricjs",
-    "fabric",
-    "image",
+    "vue-component",
+    "image-annotation",
+    "image-labeling",
+    "image-marker",
+    "annotate",
     "annotation",
+    "labeling",
+    "labeling-tool",
+    "bounding-box",
+    "fabric",
+    "fabricjs",
+    "canvas",
+    "image",
     "label",
-    "标注",
-    "image caption",
     "image-caption",
+    "标注",
+    "图片标注",
     "在线图片标注",
     "数据集标注"
   ],
@@ -43,9 +56,16 @@
   "files": [
     "dist"
   ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "test": "vitest run",
     "typecheck": "vue-tsc --noEmit"
   },
   "peerDependencies": {
@@ -56,9 +76,11 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.0",
+    "jsdom": "^30.1.0",
     "typescript": "~5.6.0",
     "vite": "^6.0.0",
     "vite-plugin-dts": "^4.3.0",
+    "vitest": "^5.0.1",
     "vue": "^3.5.0",
     "vue-tsc": "^2.1.0"
   }

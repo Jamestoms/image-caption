@@ -1,5 +1,11 @@
 # image-caption
 
+[![npm version](https://img.shields.io/npm/v/image-caption.svg)](https://www.npmjs.com/package/image-caption)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![test](https://img.shields.io/badge/test-vitest-green.svg)]()
+
+A Vue 3 image annotation component based on [fabric.js](https://www.fabricjs.com/) — draw rect / circle / polygon annotations on images, with zoom & pan, undo/redo, data echo and PNG export.
+
 基于 [fabric.js](https://www.fabricjs.com/) 的 Vue3 在线图片标注组件。
 
 提供 `<ImageCaption />` 组件：缩略图区域 + 主标注区域 + 工具区域，支持矩形、圆形、多边形标注，支持选中拖动、删除、撤销/反撤销、标签管理、标注数据回显与获取。

@@ -418,11 +418,22 @@ export function useCanvasEngine(options: EngineOptions) {
       canvas.requestRenderAll()
       return
     }
-    pendingShape = new Polygon(pts, {
-      ...annotationShapeProps(),
-      selectable: false,
-      evented: false,
-    })
+    // 与 createShapeFromData 保持一致：以包围盒左上角为局部原点构造，
+    // left/top 承载绝对坐标，保证序列化往返不错位
+    const xs = pts.map((p) => p.x)
+    const ys = pts.map((p) => p.y)
+    const minX = Math.min(...xs)
+    const minY = Math.min(...ys)
+    pendingShape = new Polygon(
+      pts.map((p) => ({ x: p.x - minX, y: p.y - minY })),
+      {
+        ...annotationShapeProps(),
+        left: minX,
+        top: minY,
+        selectable: false,
+        evented: false,
+      }
+    )
     canvas.add(pendingShape)
     canvas.requestRenderAll()
     notifyPendingDrawn()

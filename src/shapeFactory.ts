@@ -79,8 +79,17 @@ export function createShapeFromData(data: AnnotationData): FabricObject | null {
     return shape
   }
   if (data.type === 'polygon' && data.points && data.points.length > 0) {
-    // 以绝对坐标点构造，fabric 自动计算包围盒 left/top 与 pathOffset
-    const shape = new Polygon(data.points as Point[], common)
+    // 以包围盒左上角为原点的局部坐标构造，left/top 承载绝对位置，
+    // 与 shapeToData 的换算（left + 局部点）严格互逆（fabric 6 中
+    // pathOffset 语义依赖内部 bbox 计算，直接用绝对点构造会导致序列化坐标偏移）
+    const xs = data.points.map((p) => p.x)
+    const ys = data.points.map((p) => p.y)
+    const minX = Math.min(...xs)
+    const minY = Math.min(...ys)
+    const shape = new Polygon(
+      data.points.map((p) => ({ x: p.x - minX, y: p.y - minY })) as Point[],
+      { ...common, left: minX, top: minY }
+    )
     ;(shape as any).annotationId = data.id
     ;(shape as any).label = data.label
     return shape
@@ -118,11 +127,11 @@ export function shapeToData(obj: FabricObject): AnnotationData | null {
     }
   }
   if (obj.type === 'polygon') {
-    // 顶点绝对坐标 = 对象位置 + 本地点 - pathOffset（scale 恒为 1）
-    const offset = o.pathOffset || { x: 0, y: 0 }
+    // 顶点绝对坐标 = 对象位置 + 局部点（构造时以包围盒左上角为局部原点，
+    // 见 createShapeFromData，两者严格互逆）
     const points = ((o.points || []) as Point[]).map((p) => ({
-      x: round2(o.left + p.x - offset.x),
-      y: round2(o.top + p.y - offset.y),
+      x: round2(o.left + p.x),
+      y: round2(o.top + p.y),
     }))
     return { id, type: 'polygon', label, points }
   }
