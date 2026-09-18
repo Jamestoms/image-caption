@@ -1,6 +1,6 @@
-# image-caption
+# vue-image-annotation
 
-[![npm version](https://img.shields.io/npm/v/image-caption.svg)](https://www.npmjs.com/package/image-caption)
+[![npm version](https://img.shields.io/npm/v/vue-image-annotation.svg)](https://www.npmjs.com/package/vue-image-annotation)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![test](https://img.shields.io/badge/test-vitest-green.svg)]()
 
@@ -26,9 +26,9 @@ A Vue 3 image annotation component based on [fabric.js](https://www.fabricjs.com
 
 ## 示例截图
 
-![demo1 整体界面与标注效果](https://raw.githubusercontent.com/jamestoms/image-caption/HEAD/demo1.png)
+![demo1 整体界面与标注效果](https://raw.githubusercontent.com/Jamestoms/image-annotation/HEAD/demo1.png)
 
-![demo2 标注编辑交互](https://raw.githubusercontent.com/jamestoms/image-caption/HEAD/demo2.png)
+![demo2 标注编辑交互](https://raw.githubusercontent.com/Jamestoms/image-annotation/HEAD/demo2.png)
 
 ## 环境要求
 
@@ -40,11 +40,11 @@ A Vue 3 image annotation component based on [fabric.js](https://www.fabricjs.com
 ## 安装
 
 ```bash
-pnpm add image-caption
+pnpm add vue-image-annotation
 # 或
-npm install image-caption
+npm install vue-image-annotation
 # 或
-yarn add image-caption
+yarn add vue-image-annotation
 ```
 
 ## 使用方式
@@ -54,8 +54,8 @@ yarn add image-caption
 ```ts
 // main.ts
 import { createApp } from 'vue'
-import ImageCaption from 'image-caption'
-import 'image-caption/style.css'
+import ImageCaption from 'vue-image-annotation'
+import 'vue-image-annotation/style.css'
 import App from './App.vue'
 
 const app = createApp(App)
@@ -83,8 +83,8 @@ app.mount('#app')
 
 ```vue
 <script setup lang="ts">
-import { ImageCaption } from 'image-caption'
-import 'image-caption/style.css'
+import { ImageCaption } from 'vue-image-annotation'
+import 'vue-image-annotation/style.css'
 </script>
 
 <template>
@@ -126,7 +126,7 @@ import 'image-caption/style.css'
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { AnnotationData } from 'image-caption'
+import type { AnnotationData } from 'vue-image-annotation'
 
 const images = ref([
   { id: 'img-1', url: 'https://example.com/a.jpg' },

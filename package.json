@@ -1,13 +1,13 @@
 {
-  "name": "image-caption",
+  "name": "vue-image-annotation",
   "author": "jamestoms",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jamestoms/image-caption.git"
+    "url": "https://github.com/Jamestoms/image-annotation.git"
   },
-  "homepage": "https://github.com/jamestoms/image-caption#readme",
+  "homepage": "https://github.com/Jamestoms/image-annotation#readme",
   "bugs": {
-    "url": "https://github.com/jamestoms/image-caption/issues"
+    "url": "https://github.com/Jamestoms/image-annotation/issues"
   },
   "version": "1.0.0",
   "description": "Vue 3 image annotation component based on fabric.js — draw rect / circle / polygon annotations on images with zoom, undo/redo, echo and PNG export. 基于 fabric.js 的 Vue3 在线图片标注组件",
@@ -36,22 +36,23 @@
     "canvas",
     "image",
     "label",
+    "vue-image-annotation",
     "image-caption",
     "标注",
     "图片标注",
     "在线图片标注",
     "数据集标注"
   ],
-  "main": "./dist/image-caption.umd.cjs",
-  "module": "./dist/image-caption.js",
+  "main": "./dist/vue-image-annotation.umd.cjs",
+  "module": "./dist/vue-image-annotation.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/image-caption.js",
-      "require": "./dist/image-caption.umd.cjs"
+      "import": "./dist/vue-image-annotation.js",
+      "require": "./dist/vue-image-annotation.umd.cjs"
     },
-    "./style.css": "./dist/image-caption.css"
+    "./style.css": "./dist/vue-image-annotation.css"
   },
   "files": [
     "dist"
