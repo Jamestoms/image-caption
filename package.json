@@ -1,5 +1,5 @@
 {
-  "name": "vue-image-annotation",
+  "name": "vue3-image-annotation",
   "author": "jamestoms",
   "repository": {
     "type": "git",
@@ -36,23 +36,23 @@
     "canvas",
     "image",
     "label",
-    "vue-image-annotation",
+    "vue3-image-annotation",
     "image-caption",
     "标注",
     "图片标注",
     "在线图片标注",
     "数据集标注"
   ],
-  "main": "./dist/vue-image-annotation.umd.cjs",
-  "module": "./dist/vue-image-annotation.js",
+  "main": "./dist/vue3-image-annotation.umd.cjs",
+  "module": "./dist/vue3-image-annotation.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/vue-image-annotation.js",
-      "require": "./dist/vue-image-annotation.umd.cjs"
+      "import": "./dist/vue3-image-annotation.js",
+      "require": "./dist/vue3-image-annotation.umd.cjs"
     },
-    "./style.css": "./dist/vue-image-annotation.css"
+    "./style.css": "./dist/vue3-image-annotation.css"
   },
   "files": [
     "dist"

@@ -22,7 +22,7 @@ export default defineConfig(({ command }) => {
           lib: {
             entry: 'src/index.ts',
             name: 'ImageCaption',
-            fileName: 'vue-image-annotation',
+            fileName: 'vue3-image-annotation',
             formats: ['es', 'umd'],
           },
           rollupOptions: {
